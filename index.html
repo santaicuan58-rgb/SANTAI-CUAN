@@ -1,42 +1,206 @@
-<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CUAN SANTAI</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><style>
-:root{--g:#176b50;--d:#123e31;--bg:#f4f7f5;--line:#e2eae5}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#192d25;font:15px system-ui}button,input,select,textarea{font:inherit}button{border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}.primary{background:var(--g);color:white}.secondary{background:#e8f1ec;color:#23523f}.danger{background:#ffeded;color:#a43b3b}.muted{color:#718078}.hidden{display:none!important}.auth{min-height:100vh;display:grid;place-items:center;padding:20px}.authbox,.card{background:white;border:1px solid var(--line);border-radius:16px;padding:18px}.authbox{width:min(440px,100%)}.logo{font-size:23px;font-weight:900;color:var(--d)}.field{display:grid;gap:6px;margin:12px 0}.field label{font-size:12px;font-weight:750}.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:10px;padding:11px;width:100%}.field textarea{min-height:90px}.layout{display:flex;min-height:100vh}.side{width:225px;background:var(--d);color:white;padding:20px 14px;display:flex;flex-direction:column;gap:18px}.side .logo{color:white}.nav{display:grid;gap:5px}.nav button{background:transparent;color:#d3e4dc;text-align:left}.nav button.active{background:#245a48}main{padding:24px;width:100%;max-width:1400px;margin:auto}.top,.head,.row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.top{margin-bottom:20px}.top h1{margin:3px 0}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{font-size:28px;font-weight:850}.label,.meta{font-size:12px;color:#718078}.view{display:none}.view.active{display:block}.section{margin-top:16px}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.item{background:white;border:1px solid var(--line);border-radius:13px;padding:14px;margin:10px 0}.item h3{font-size:14px}.item p{white-space:pre-wrap;font-size:13px}.badge{font-size:11px;border-radius:30px;padding:4px 8px;background:#fff1dc;color:#965c0c}.badge.approved{background:#e7f5ec;color:#1c714d}.badge.rejected{background:#ffeded;color:#a43b3b}.tablewrap{overflow:auto}table{width:100%;min-width:600px;border-collapse:collapse;font-size:13px}td,th{text-align:left;padding:10px;border-bottom:1px solid var(--line)}th{color:#718078;font-size:11px}.notice{background:#fff8e9;border:1px solid #f4e4c5;border-radius:12px;padding:12px;font-size:12px;color:#79531e}.empty{text-align:center;padding:22px;color:#718078}.toast{position:fixed;bottom:16px;right:16px;background:#193e31;color:white;padding:12px;border-radius:10px}
-@media(max-width:800px){.side{width:180px}.grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){.layout{display:block}.side{width:100%;padding:12px}.nav{display:flex;overflow:auto}.nav button{white-space:nowrap;font-size:12px;padding:8px}.side .tag{display:none}main{padding:14px}.two{grid-template-columns:1fr}.grid{gap:8px}}
-</style></head><body>
-<section id="auth" class="auth"><div class="authbox"><div class="logo">CUAN SANTAI</div><div class="muted">AI MARKETING TEAM · OWNER WORKSPACE</div><h2 id="authTitle">Masuk ke dashboard</h2><div class="field"><label>Email</label><input id="email" type="email"></div><div class="field"><label>Password</label><input id="password" type="password"></div><div class="row"><button class="primary" id="authSubmit">Masuk</button><button class="secondary" id="toggleAuth">Buat akun</button></div><p id="authMsg" class="muted"></p><div class="notice">Buat akun pemilik pertama. Setelah selesai, nonaktifkan pendaftaran publik di pengaturan Supabase Auth.</div></div></section>
-<div id="app" class="layout hidden"><aside class="side"><div><div class="logo">CUAN SANTAI</div><small>OWNER WORKSPACE</small></div><nav class="nav"><button class="active" data-view="dashboard">▦ Dashboard</button><button data-view="products">▣ Produk</button><button data-view="studio">✦ Studio AI</button><button data-view="approval">✓ Persetujuan</button><button data-view="settings">⚙ Pengaturan</button></nav><small>Setiap konten wajib disetujui pemilik.</small></aside>
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CUAN SANTAI</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--g:#176b50;--d:#123e31;--bg:#f4f7f5;--line:#e2eae5}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#192d25;font:15px system-ui}
+button,input,select,textarea{font:inherit}button{border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+button:disabled{opacity:.55;cursor:wait}.primary{background:var(--g);color:white}.secondary{background:#e8f1ec;color:#23523f}.danger{background:#ffeded;color:#a43b3b}
+.muted{color:#718078}.hidden{display:none!important}.auth{min-height:100vh;display:grid;place-items:center;padding:20px}
+.authbox,.card{background:white;border:1px solid var(--line);border-radius:16px;padding:18px}.authbox{width:min(440px,100%)}
+.logo{font-size:23px;font-weight:900;color:var(--d)}.field{display:grid;gap:6px;margin:12px 0}.field label{font-size:12px;font-weight:750}
+.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:10px;padding:11px;width:100%}.field textarea{min-height:90px}
+.layout{display:flex;min-height:100vh}.side{width:225px;background:var(--d);color:white;padding:20px 14px;display:flex;flex-direction:column;gap:18px}
+.side .logo{color:white}.nav{display:grid;gap:5px}.nav button{background:transparent;color:#d3e4dc;text-align:left}.nav button.active{background:#245a48}
+main{padding:24px;width:100%;max-width:1400px;margin:auto}.top,.head,.row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.top{margin-bottom:20px}.top h1{margin:3px 0}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{font-size:28px;font-weight:850}.label,.meta{font-size:12px;color:#718078}.view{display:none}.view.active{display:block}.section{margin-top:16px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.item{background:white;border:1px solid var(--line);border-radius:13px;padding:14px;margin:10px 0}
+.item h3{font-size:14px}.item p{white-space:pre-wrap;font-size:13px}.badge{font-size:11px;border-radius:30px;padding:4px 8px;background:#fff1dc;color:#965c0c}
+.badge.approved{background:#e7f5ec;color:#1c714d}.badge.rejected{background:#ffeded;color:#a43b3b}
+.tablewrap{overflow:auto}table{width:100%;min-width:600px;border-collapse:collapse;font-size:13px}td,th{text-align:left;padding:10px;border-bottom:1px solid var(--line)}
+th{color:#718078;font-size:11px}.notice{background:#fff8e9;border:1px solid #f4e4c5;border-radius:12px;padding:12px;font-size:12px;color:#79531e}
+.empty{text-align:center;padding:22px;color:#718078}.toast{position:fixed;bottom:16px;right:16px;left:16px;max-width:520px;margin:auto;background:#193e31;color:white;padding:12px;border-radius:10px;z-index:5}
+@media(max-width:800px){.side{width:180px}.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.layout{display:block}.side{width:100%;padding:12px}.nav{display:flex;overflow:auto}.nav button{white-space:nowrap;font-size:12px;padding:8px}
+.side .tag{display:none}main{padding:14px}.two{grid-template-columns:1fr}.grid{gap:8px}}
+</style>
+</head>
+<body>
+<section id="auth" class="auth"><div class="authbox">
+<div class="logo">CUAN SANTAI</div><div class="muted">AI MARKETING TEAM · OWNER WORKSPACE</div>
+<h2 id="authTitle">Masuk ke dashboard</h2>
+<div class="field"><label>Email</label><input id="email" type="email" autocomplete="username"></div>
+<div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div>
+<div class="row"><button class="primary" id="authSubmit">Masuk</button><button class="secondary" id="toggleAuth">Buat akun</button></div>
+<p id="authMsg" class="muted"></p><div class="notice">Gunakan akun pemilik. Setelah akun pemilik dibuat, nonaktifkan pendaftaran publik di Supabase Auth.</div>
+</div></section>
+
+<div id="app" class="layout hidden">
+<aside class="side"><div><div class="logo">CUAN SANTAI</div><small>OWNER WORKSPACE</small></div>
+<nav class="nav"><button class="active" data-view="dashboard">▦ Dashboard</button><button data-view="products">▣ Produk</button><button data-view="studio">✦ Studio AI</button><button data-view="approval">✓ Persetujuan</button><button data-view="settings">⚙ Pengaturan</button></nav>
+<small>Setiap konten wajib disetujui pemilik.</small></aside>
 <main><header class="top"><div><small style="color:#176b50;font-weight:bold">MODERN · SANTAI · TERPERCAYA</small><h1 id="pageTitle">Dashboard</h1><span class="muted">Shopee Affiliate · TikTok Shop Affiliate</span></div><button class="secondary" id="logout">Keluar</button></header>
-<section id="dashboard" class="view active"><div class="grid"><div class="card"><div class="label">Produk</div><div class="stat" id="nProducts">0</div></div><div class="card"><div class="label">Menunggu</div><div class="stat" id="nPending">0</div></div><div class="card"><div class="label">Disetujui</div><div class="stat" id="nApproved">0</div></div><div class="card"><div class="label">Ditolak</div><div class="stat" id="nRejected">0</div></div></div><div class="section two"><div class="card"><h3>Alur kerja</h3><p class="muted">Masukkan produk → buat draft AI → periksa → setujui atau tolak.</p><button class="primary" onclick="showView('products')">Tambah produk</button> <button class="secondary" onclick="showView('studio')">Buat draft</button></div><div class="card"><h3>Kontrol pemilik</h3><div class="notice">Belum ada publikasi otomatis. Konten hanya menjadi draft sampai disetujui.</div></div></div><div class="section card"><div class="head"><h3>Konten terbaru</h3><button class="secondary" onclick="showView('approval')">Lihat semua</button></div><div id="recent"></div></div></section>
-<section id="products" class="view"><div class="head"><h2>Katalog produk</h2><button class="primary" id="newProduct">+ Tambah produk</button></div><div class="card hidden" id="productCard"><h3>Produk affiliate</h3><form id="productForm"><div class="two"><div class="field"><label>Nama produk</label><input name="name" required></div><div class="field"><label>Kategori</label><select name="category"><option>Peralatan rumah</option><option>Dapur</option><option>Kebersihan</option><option>Perawatan diri</option><option>Gadget harian</option><option>Lainnya</option></select></div><div class="field"><label>Harga (Rp)</label><input name="price" type="number" min="0"></div><div class="field"><label>Sumber</label><select name="source"><option>Shopee Affiliate</option><option>TikTok Shop Affiliate</option></select></div><div class="field"><label>Link affiliate</label><input name="url" type="url"></div><div class="field"><label>Catatan manfaat</label><input name="notes"></div></div><button class="primary">Simpan</button> <button type="button" class="secondary" id="cancelProduct">Batal</button></form></div><div class="section card tablewrap"><table><thead><tr><th>Produk</th><th>Kategori</th><th>Harga</th><th>Sumber</th><th>Link</th><th>Aksi</th></tr></thead><tbody id="productRows"></tbody></table></div></section>
-<section id="studio" class="view"><div class="two"><div class="card"><h2>Generator konten AI</h2><p class="muted">Pilih produk dan arah konten. Draft masuk ke antrean persetujuan.</p><form id="generateForm"><div class="field"><label>Produk</label><select name="product_id" id="productSelect" required></select></div><div class="two"><div class="field"><label>Platform</label><select name="platform"><option>TikTok</option><option>Instagram Reels</option><option>Instagram Carousel</option><option>Facebook</option></select></div><div class="field"><label>Format</label><select name="format"><option>Video pendek</option><option>Carousel</option><option>Story</option><option>Caption promosi</option></select></div></div><div class="field"><label>Gaya</label><select name="tone"><option>Santai dan relatable</option><option>Tips edukatif</option><option>Review jujur</option><option>Promo tidak memaksa</option></select></div><div class="field"><label>Brief tambahan</label><textarea name="brief"></textarea></div><button class="primary" id="generateBtn">✦ Buat draft AI</button></form></div><div class="card"><h3>Standar brand</h3><ul class="muted"><li>Bahasa Indonesia ringan.</li><li>Hindari klaim tidak terbukti.</li><li>CTA ramah dan tidak memaksa.</li><li>Jelaskan tautan affiliate sewajarnya.</li></ul><div class="notice">Periksa fakta, harga, stok, dan link sebelum menyetujui.</div></div></div></section>
+
+<section id="dashboard" class="view active">
+<div class="grid"><div class="card"><div class="label">Produk</div><div class="stat" id="nProducts">0</div></div><div class="card"><div class="label">Menunggu</div><div class="stat" id="nPending">0</div></div><div class="card"><div class="label">Disetujui</div><div class="stat" id="nApproved">0</div></div><div class="card"><div class="label">Ditolak</div><div class="stat" id="nRejected">0</div></div></div>
+<div class="section two"><div class="card"><h3>Alur kerja</h3><p class="muted">Masukkan produk → buat draft AI → periksa → setujui atau tolak.</p><button class="primary" onclick="showView('products')">Tambah produk</button> <button class="secondary" onclick="showView('studio')">Buat draft</button></div>
+<div class="card"><h3>Kontrol pemilik</h3><div class="notice">Tidak ada publikasi otomatis. Konten hanya menjadi draft sampai disetujui.</div></div></div>
+<div class="section card"><div class="head"><h3>Konten terbaru</h3><button class="secondary" onclick="showView('approval')">Lihat semua</button></div><div id="recent"></div></div>
+</section>
+
+<section id="products" class="view"><div class="head"><h2>Katalog produk</h2><button class="primary" id="newProduct">+ Tambah produk</button></div>
+<div class="card hidden" id="productCard"><h3>Produk affiliate</h3><form id="productForm"><div class="two">
+<div class="field"><label>Nama produk</label><input name="name" required></div>
+<div class="field"><label>Kategori</label><select name="category"><option>Peralatan rumah</option><option>Dapur</option><option>Kebersihan</option><option>Perawatan diri</option><option>Gadget harian</option><option>Lainnya</option></select></div>
+<div class="field"><label>Harga (Rp)</label><input name="price" type="number" min="0"></div>
+<div class="field"><label>Sumber</label><select name="source"><option>Shopee Affiliate</option><option>TikTok Shop Affiliate</option></select></div>
+<div class="field"><label>Link affiliate</label><input name="url" type="url"></div>
+<div class="field"><label>Catatan manfaat</label><input name="notes"></div>
+</div><button class="primary">Simpan</button> <button type="button" class="secondary" id="cancelProduct">Batal</button></form></div>
+<div class="section card tablewrap"><table><thead><tr><th>Produk</th><th>Kategori</th><th>Harga</th><th>Sumber</th><th>Link</th><th>Aksi</th></tr></thead><tbody id="productRows"></tbody></table></div></section>
+
+<section id="studio" class="view"><div class="two"><div class="card"><h2>Generator konten AI</h2><p class="muted">Pilih produk dan arah konten. Draft masuk ke antrean persetujuan.</p>
+<form id="generateForm"><div class="field"><label>Produk</label><select name="product_id" id="productSelect" required></select></div>
+<div class="two"><div class="field"><label>Platform</label><select name="platform"><option>TikTok</option><option>Instagram Reels</option><option>Instagram Carousel</option><option>Facebook</option></select></div>
+<div class="field"><label>Format</label><select name="format"><option>Video pendek</option><option>Carousel</option><option>Story</option><option>Caption promosi</option></select></div></div>
+<div class="field"><label>Gaya</label><select name="tone"><option>Santai dan relatable</option><option>Tips edukatif</option><option>Review jujur</option><option>Promo tidak memaksa</option></select></div>
+<div class="field"><label>Brief tambahan</label><textarea name="brief"></textarea></div><button class="primary" id="generateBtn">✦ Buat draft AI</button></form></div>
+<div class="card"><h3>Standar brand</h3><ul class="muted"><li>Bahasa Indonesia ringan.</li><li>Hindari klaim tidak terbukti.</li><li>CTA ramah dan tidak memaksa.</li><li>Jelaskan tautan affiliate sewajarnya.</li></ul><div class="notice">Generator AI baru aktif setelah Edge Function dipasang pada tahap berikutnya.</div></div></div></section>
+
 <section id="approval" class="view"><div class="head"><h2>Persetujuan konten</h2><select id="filter"><option value="all">Semua status</option><option value="pending">Menunggu</option><option value="approved">Disetujui</option><option value="rejected">Ditolak</option></select></div><div id="contentList"></div></section>
-<section id="settings" class="view"><div class="two"><div class="card"><h3>Identitas brand</h3><p>CUAN SANTAI</p><p>Modern, santai, terpercaya</p><p>Target semua kalangan</p><p>Harga murah sampai menengah</p><p>Shopee Affiliate dan TikTok Shop Affiliate</p></div><div class="card"><h3>Status</h3><div class="notice">Produksi tahap 1. Integrasi publikasi, scheduler, DM, dan riset marketplace otomatis belum dibangun.</div><p class="muted">Jangan masukkan API key di halaman website. Simpan hanya di environment server.</p></div></div></section><p class="muted" style="font-size:11px">CUAN SANTAI · Production Stage 1</p></main></div><div id="toast" class="toast hidden"></div>
+<section id="settings" class="view"><div class="two"><div class="card"><h3>Identitas brand</h3><p>CUAN SANTAI</p><p>Modern, santai, terpercaya</p><p>Target semua kalangan</p><p>Harga murah sampai menengah</p><p>Shopee Affiliate dan TikTok Shop Affiliate</p></div><div class="card"><h3>Status sistem</h3><div class="notice">Database Supabase terhubung langsung. Generator AI, publikasi, scheduler, dan DM otomatis memerlukan pengaturan server terpisah.</div><p class="muted">Jangan masukkan Secret Key atau OpenAI API Key ke halaman website.</p></div></div></section>
+<p class="muted" style="font-size:11px">CUAN SANTAI · Production Stage 1</p></main></div>
+<div id="toast" class="toast hidden"></div>
+
 <script>
-const $=id=>document.getElementById(id);let sb,session,register=false,products=[],contents=[];
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function toast(s){$('toast').textContent=s;$('toast').classList.remove('hidden');setTimeout(()=>$('toast').classList.add('hidden'),3000)}
-async function api(path,opts={}){let r=await fetch('/api'+path,{...opts,headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token}});let j=await r.json();if(!r.ok)throw Error(j.error||'Gagal');return j}
-async function init(){let c=await fetch('/config').then(r=>r.json());if(!c.url||!c.key){$('authMsg').textContent='Supabase belum dikonfigurasi di server.';return}sb=supabase.createClient(c.url,c.key);let s=await sb.auth.getSession();session=s.data.session;if(session)enter();sb.auth.onAuthStateChange((_e,s)=>{session=s;if(s)enter();else showAuth()})}
-function showAuth(){$('auth').classList.remove('hidden');$('app').classList.add('hidden')}
-function enter(){$('auth').classList.add('hidden');$('app').classList.remove('hidden');load()}
-$('toggleAuth').onclick=()=>{register=!register;$('authTitle').textContent=register?'Buat akun pemilik':'Masuk ke dashboard';$('authSubmit').textContent=register?'Daftar':'Masuk';$('toggleAuth').textContent=register?'Kembali masuk':'Buat akun'};
-$('authSubmit').onclick=async()=>{try{let email=$('email').value,password=$('password').value;if(register){let {error}=await sb.auth.signUp({email,password});if(error)throw error;$('authMsg').textContent='Pendaftaran berhasil. Konfirmasi email bila diminta, lalu masuk.'}else{let {data,error}=await sb.auth.signInWithPassword({email,password});if(error)throw error;session=data.session;enter()}}catch(e){$('authMsg').textContent=e.message}};
-$('logout').onclick=()=>sb.auth.signOut();
-function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===id));$('pageTitle').textContent=({dashboard:'Dashboard',products:'Produk Affiliate',studio:'Studio AI',approval:'Persetujuan Konten',settings:'Pengaturan'})[id];renderContents()}
+const SUPABASE_URL = 'https://aqzxgyfvwtmannzhouej.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_VChCYi5qEH5aerj4pKP6tA_Fv_lPyI0';
+const $ = id => document.getElementById(id);
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let session = null, register = false, products = [], contents = [], loading = false;
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(s){$('toast').textContent=s;$('toast').classList.remove('hidden');setTimeout(()=>$('toast').classList.add('hidden'),3200)}
+function showAuth(msg=''){$('auth').classList.remove('hidden');$('app').classList.add('hidden');$('authMsg').textContent=msg}
+function enter(){ $('auth').classList.add('hidden');$('app').classList.remove('hidden'); load(); }
+function showView(id){
+ document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
+ document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===id));
+ $('pageTitle').textContent=({dashboard:'Dashboard',products:'Produk Affiliate',studio:'Studio AI',approval:'Persetujuan Konten',settings:'Pengaturan'})[id];
+ renderContents();
+}
 document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>showView(b.dataset.view));
-async function load(){try{let [p,c]=await Promise.all([api('/products'),api('/contents')]);products=p.products;contents=c.contents;render()}catch(e){toast(e.message)}}
+
+$('toggleAuth').onclick=()=>{
+ register=!register;
+ $('authTitle').textContent=register?'Buat akun pemilik':'Masuk ke dashboard';
+ $('authSubmit').textContent=register?'Daftar':'Masuk';
+ $('toggleAuth').textContent=register?'Kembali masuk':'Buat akun';
+ $('password').autocomplete=register?'new-password':'current-password';
+ $('authMsg').textContent='';
+};
+$('authSubmit').onclick=async()=>{
+ const btn=$('authSubmit');btn.disabled=true;
+ try{
+  const email=$('email').value.trim(), password=$('password').value;
+  if(!email||!password) throw new Error('Isi email dan password terlebih dahulu.');
+  if(password.length<6) throw new Error('Password minimal 6 karakter.');
+  if(register){
+   const {data,error}=await sb.auth.signUp({email,password});if(error)throw error;
+   $('authMsg').textContent=data.session?'Akun berhasil dibuat.':'Pendaftaran berhasil. Periksa email jika konfirmasi diminta, lalu masuk.';
+  }else{
+   const {error}=await sb.auth.signInWithPassword({email,password});if(error)throw error;
+  }
+ }catch(e){$('authMsg').textContent=e.message||'Terjadi kesalahan.'}
+ finally{btn.disabled=false}
+};
+$('logout').onclick=async()=>{await sb.auth.signOut();};
+
+async function load(){
+ if(loading)return;loading=true;
+ try{
+  const {data:{user},error:ue}=await sb.auth.getUser();if(ue)throw ue;if(!user){showAuth();return}
+  const [p,c]=await Promise.all([
+   sb.from('products').select('*').order('created_at',{ascending:false}),
+   sb.from('contents').select('*').order('created_at',{ascending:false})
+  ]);
+  if(p.error)throw p.error;if(c.error)throw c.error;
+  products=p.data||[];contents=c.data||[];render();
+ }catch(e){toast('Gagal memuat database: '+(e.message||'Periksa RLS dan koneksi.'))}
+ finally{loading=false}
+}
 function money(n){return n?'Rp '+Number(n).toLocaleString('id-ID'):'—'}
-function status(s){return `<span class="badge ${s}">${s==='pending'?'Menunggu':s==='approved'?'Disetujui':'Ditolak'}</span>`}
-function card(c){return `<article class="item"><div class="meta">${esc(c.platform)} · ${esc(c.format)} · ${new Date(c.created_at).toLocaleString('id-ID')} ${status(c.status)}</div><h3>${esc(c.title)}</h3><div class="meta">Produk: ${esc(c.product_name)}</div><p>${esc(c.body)}</p><div class="row">${c.status==='pending'?`<button class="primary" onclick="setStatus('${c.id}','approved')">Setujui</button><button class="danger" onclick="setStatus('${c.id}','rejected')">Tolak</button>`:''}<button class="secondary" onclick="copyContent('${c.id}')">Salin</button></div></article>`}
-function render(){ $('nProducts').textContent=products.length;$('nPending').textContent=contents.filter(c=>c.status==='pending').length;$('nApproved').textContent=contents.filter(c=>c.status==='approved').length;$('nRejected').textContent=contents.filter(c=>c.status==='rejected').length;
-$('productRows').innerHTML=products.map(p=>`<tr><td><b>${esc(p.name)}</b><div class="muted">${esc(p.notes)}</div></td><td>${esc(p.category)}</td><td>${money(p.price)}</td><td>${esc(p.source)}</td><td>${p.affiliate_url?`<a href="${esc(p.affiliate_url)}" target="_blank" rel="noopener">Buka</a>`:'—'}</td><td><button class="danger" onclick="delProduct('${p.id}')">Hapus</button></td></tr>`).join('')||'<tr><td colspan="6" class="empty">Belum ada produk.</td></tr>';
-$('productSelect').innerHTML=products.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')||'<option value="">Tambahkan produk dahulu</option>';
-$('recent').innerHTML=contents.slice(0,3).map(card).join('')||'<div class="empty">Belum ada draft.</div>';renderContents()}
-function renderContents(){if(!$('contentList'))return;let f=$('filter').value;$('contentList').innerHTML=contents.filter(c=>f==='all'||c.status===f).map(card).join('')||'<div class="card empty">Tidak ada konten.</div>'}
-$('newProduct').onclick=()=>$('productCard').classList.remove('hidden');$('cancelProduct').onclick=()=>$('productCard').classList.add('hidden');
-$('productForm').onsubmit=async e=>{e.preventDefault();let f=new FormData(e.target);try{await api('/products',{method:'POST',body:JSON.stringify({name:f.get('name'),category:f.get('category'),price:Number(f.get('price')||0),source:f.get('source'),affiliate_url:f.get('url'),notes:f.get('notes')})});e.target.reset();$('productCard').classList.add('hidden');await load();toast('Produk tersimpan.')}catch(e){toast(e.message)}};
-async function delProduct(id){if(!confirm('Hapus produk?'))return;try{await api('/products/'+id,{method:'DELETE'});await load()}catch(e){toast(e.message)}}
-$('generateForm').onsubmit=async e=>{e.preventDefault();let f=new FormData(e.target);$('generateBtn').disabled=true;$('generateBtn').textContent='AI bekerja...';try{await api('/generate',{method:'POST',body:JSON.stringify({product_id:f.get('product_id'),platform:f.get('platform'),format:f.get('format'),tone:f.get('tone'),brief:f.get('brief')})});await load();showView('approval');toast('Draft AI masuk antrean persetujuan.')}catch(e){toast(e.message)}finally{$('generateBtn').disabled=false;$('generateBtn').textContent='✦ Buat draft AI'}};
-async function setStatus(id,status){try{await api('/contents/'+id+'/status',{method:'PATCH',body:JSON.stringify({status})});await load();toast('Status konten diperbarui.')}catch(e){toast(e.message)}}
-function copyContent(id){let c=contents.find(x=>x.id===id);if(c)navigator.clipboard.writeText(c.title+'\n\n'+c.body).then(()=>toast('Konten disalin.'))}
-$('filter').onchange=renderContents;init();
-</script></body></html>
+function status(s){return `<span class="badge ${esc(s)}">${s==='pending'?'Menunggu':s==='approved'?'Disetujui':s==='rejected'?'Ditolak':esc(s)}</span>`}
+function card(c){
+ return `<article class="item"><div class="meta">${esc(c.platform)} · ${esc(c.format)} · ${c.created_at?new Date(c.created_at).toLocaleString('id-ID'):''} ${status(c.status)}</div>
+ <h3>${esc(c.title)}</h3><div class="meta">Produk: ${esc(c.product_name)}</div><p>${esc(c.body)}</p>
+ <div class="row">${c.status==='pending'?`<button class="primary" onclick="setStatus('${esc(c.id)}','approved')">Setujui</button><button class="danger" onclick="setStatus('${esc(c.id)}','rejected')">Tolak</button>`:''}
+ <button class="secondary" onclick="copyContent('${esc(c.id)}')">Salin</button></div></article>`;
+}
+function render(){
+ $('nProducts').textContent=products.length;
+ $('nPending').textContent=contents.filter(c=>c.status==='pending').length;
+ $('nApproved').textContent=contents.filter(c=>c.status==='approved').length;
+ $('nRejected').textContent=contents.filter(c=>c.status==='rejected').length;
+ $('productRows').innerHTML=products.map(p=>`<tr><td><b>${esc(p.name)}</b><div class="muted">${esc(p.notes)}</div></td><td>${esc(p.category)}</td><td>${money(p.price)}</td><td>${esc(p.source)}</td><td>${p.affiliate_url?`<a href="${esc(p.affiliate_url)}" target="_blank" rel="noopener">Buka</a>`:'—'}</td><td><button class="danger" onclick="delProduct('${esc(p.id)}')">Hapus</button></td></tr>`).join('')||'<tr><td colspan="6" class="empty">Belum ada produk.</td></tr>';
+ $('productSelect').innerHTML=products.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('')||'<option value="">Tambahkan produk dahulu</option>';
+ $('recent').innerHTML=contents.slice(0,3).map(card).join('')||'<div class="empty">Belum ada draft.</div>';
+ renderContents();
+}
+function renderContents(){
+ if(!$('contentList'))return;
+ const f=$('filter').value;
+ $('contentList').innerHTML=contents.filter(c=>f==='all'||c.status===f).map(card).join('')||'<div class="card empty">Tidak ada konten.</div>';
+}
+$('newProduct').onclick=()=>$('productCard').classList.remove('hidden');
+$('cancelProduct').onclick=()=>$('productCard').classList.add('hidden');
+$('productForm').onsubmit=async e=>{
+ e.preventDefault();const f=new FormData(e.target);
+ try{
+  const {data:{user},error:ue}=await sb.auth.getUser();if(ue)throw ue;if(!user)throw new Error('Silakan masuk kembali.');
+  const record={user_id:user.id,name:String(f.get('name')||'').trim(),category:f.get('category'),price:Number(f.get('price')||0),source:f.get('source'),affiliate_url:String(f.get('url')||'').trim()||null,notes:String(f.get('notes')||'').trim()||null};
+  const {error}=await sb.from('products').insert(record);if(error)throw error;
+  e.target.reset();$('productCard').classList.add('hidden');await load();toast('Produk berhasil disimpan.');
+ }catch(err){toast('Gagal menyimpan produk: '+err.message)}
+};
+async function delProduct(id){
+ if(!confirm('Hapus produk ini?'))return;
+ try{const {error}=await sb.from('products').delete().eq('id',id);if(error)throw error;await load();toast('Produk dihapus.')}
+ catch(e){toast('Gagal menghapus: '+e.message)}
+}
+$('generateForm').onsubmit=async e=>{
+ e.preventDefault();
+ toast('Generator AI belum diaktifkan. Tahap berikutnya adalah memasang Supabase Edge Function secara aman.');
+};
+async function setStatus(id,newStatus){
+ if(!['approved','rejected'].includes(newStatus))return;
+ try{
+  const {error}=await sb.from('contents').update({status:newStatus,reviewed_at:new Date().toISOString()}).eq('id',id);
+  if(error)throw error;await load();toast('Status konten diperbarui.');
+ }catch(e){toast('Gagal memperbarui status: '+e.message)}
+}
+function copyContent(id){
+ const c=contents.find(x=>String(x.id)===String(id));if(!c)return;
+ const text=c.title+'\n\n'+c.body;
+ if(navigator.clipboard?.writeText)navigator.clipboard.writeText(text).then(()=>toast('Konten disalin.')).catch(()=>toast('Tidak dapat menyalin otomatis.'));
+ else toast('Fitur salin tidak didukung browser ini.');
+}
+$('filter').onchange=renderContents;
+
+sb.auth.onAuthStateChange((event,newSession)=>{
+ session=newSession;
+ if(newSession){$('auth').classList.add('hidden');$('app').classList.remove('hidden');if(event==='SIGNED_IN')load();}
+ else{products=[];contents=[];showAuth();}
+});
+(async()=>{
+ const {data:{session:existing},error}=await sb.auth.getSession();
+ if(error)showAuth(error.message);
+ else if(existing){session=existing;enter();}
+ else showAuth();
+})();
+</script>
+</body></html>
