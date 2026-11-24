@@ -261,10 +261,27 @@ $('generateForm').onsubmit=async e=>{
   showView('approval');
   toast('Draft AI berhasil dibuat dan masuk persetujuan.');
 
- }catch(err){
-  console.error(err);
-  toast('Gagal membuat draft: '+(err.message||'Periksa koneksi.'));
+ 
+}catch(err){
+  console.error('DETAIL ERROR AI:',err);
+
+  let pesan = err.message || 'Kesalahan tidak diketahui';
+
+  if(err.context){
+    try{
+      const detail = await err.context.clone().json();
+      pesan = detail.error || detail.message || pesan;
+    }catch(e){
+      try{
+        pesan = await err.context.clone().text();
+      }catch(e2){}
+    }
+  }
+
+  toast('Gagal membuat draft: '+pesan);
+
  }finally{
+
   btn.disabled=false;
   btn.textContent='✦ Buat draft AI';
  }
