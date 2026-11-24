@@ -172,10 +172,76 @@ async function delProduct(id){
  try{const {error}=await sb.from('products').delete().eq('id',id);if(error)throw error;await load();toast('Produk dihapus.')}
  catch(e){toast('Gagal menghapus: '+e.message)}
 }
+
 $('generateForm').onsubmit=async e=>{
  e.preventDefault();
- toast('Generator AI belum diaktifkan. Tahap berikutnya adalah memasang Supabase Edge Function secara aman.');
+
+ const btn=$('generateBtn');
+ if(btn.disabled)return;
+
+ btn.disabled=true;
+ btn.textContent='Sedang membuat konten AI...';
+
+ try{
+  const f=new FormData(e.target);
+  const product=products.find(
+   p=>String(p.id)===String(f.get('product_id'))
+  );
+
+  if(!product)throw new Error('Pilih produk terlebih dahulu.');
+
+  const {data:{user},error:userError}=await sb.auth.getUser();
+  if(userError)throw userError;
+  if(!user)throw new Error('Silakan login kembali.');
+
+  const {data,error}=await sb.functions.invoke(
+   'generate-content',
+   {
+    body:{
+     product:product.name,
+     platform:f.get('platform'),
+     format:f.get('format'),
+     notes:[
+      'Gaya: '+f.get('tone'),
+      'Catatan produk: '+(product.notes||'-'),
+      'Brief tambahan: '+(f.get('brief')||'-'),
+      'Harga produk: '+(product.price||'Tidak dicantumkan'),
+      'Sumber: '+(product.source||'-')
+     ].join('\n')
+    }
+   }
+  );
+
+  if(error)throw error;
+  if(data?.error)throw new Error(data.error);
+  if(!data?.content)throw new Error('AI tidak menghasilkan konten.');
+
+  const {error:saveError}=await sb.from('contents').insert({
+   user_id:user.id,
+   product_id:product.id,
+   product_name:product.name,
+   platform:f.get('platform'),
+   format:f.get('format'),
+   title:'Draft AI - '+product.name,
+   body:data.content,
+   status:'pending'
+  });
+
+  if(saveError)throw saveError;
+
+  await load();
+  showView('approval');
+  toast('Draft AI berhasil dibuat dan masuk persetujuan.');
+
+ }catch(err){
+  console.error(err);
+  toast('Gagal membuat draft: '+(err.message||'Periksa koneksi.'));
+ }finally{
+  btn.disabled=false;
+  btn.textContent='✦ Buat draft AI';
+ }
 };
+
 async function setStatus(id,newStatus){
  if(!['approved','rejected'].includes(newStatus))return;
  try{
