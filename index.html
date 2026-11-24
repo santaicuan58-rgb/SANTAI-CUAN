@@ -120,19 +120,47 @@ $('authSubmit').onclick=async()=>{
 };
 $('logout').onclick=async()=>{await sb.auth.signOut();};
 
+
 async function load(){
- if(loading)return;loading=true;
+ if(loading)return;
+ loading=true;
  try{
-  const {data:{user},error:ue}=await sb.auth.getUser();if(ue)throw ue;if(!user){showAuth();return}
-  const [p,c]=await Promise.all([
-   sb.from('products').select('*').order('created_at',{ascending:false}),
-   sb.from('contents').select('*').order('created_at',{ascending:false})
-  ]);
-  if(p.error)throw p.error;if(c.error)throw c.error;
-  products=p.data||[];contents=c.data||[];render();
- }catch(e){toast('Gagal memuat database: '+(e.message||'Periksa RLS dan koneksi.'))}
- finally{loading=false}
+  const {data:{user},error:ue}=await sb.auth.getUser();
+  if(ue)throw ue;
+  if(!user)throw new Error('Sesi login tidak ditemukan.');
+
+  console.log('AKUN AKTIF:',user.id,user.email);
+
+  const {data:pData,error:pError}=await sb
+   .from('products')
+   .select('*')
+   .order('created_at',{ascending:false});
+
+  if(pError)throw new Error('Produk: '+pError.message);
+
+  console.log('DATA PRODUK:',pData);
+
+  const {data:cData,error:cError}=await sb
+   .from('contents')
+   .select('*')
+   .order('created_at',{ascending:false});
+
+  if(cError)throw new Error('Konten: '+cError.message);
+
+  products=pData||[];
+  contents=cData||[];
+  render();
+
+  toast('Database terhubung. Produk ditemukan: '+products.length);
+
+ }catch(e){
+  console.error('KESALAHAN DATABASE:',e);
+  toast('Gagal memuat database: '+(e.message||'Periksa koneksi.'));
+ }finally{
+  loading=false;
+ }
 }
+
 function money(n){return n?'Rp '+Number(n).toLocaleString('id-ID'):'—'}
 function status(s){return `<span class="badge ${esc(s)}">${s==='pending'?'Menunggu':s==='approved'?'Disetujui':s==='rejected'?'Ditolak':esc(s)}</span>`}
 function card(c){
